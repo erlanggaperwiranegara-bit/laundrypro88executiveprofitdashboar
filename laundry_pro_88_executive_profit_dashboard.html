@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laundry Pro 88 - Executive Profit Dashboard</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              revenue: '#10b981',
+              expense: '#f43f5e',
+              netprofit: '#06b6d4',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="h-full flex flex-col md:flex-row overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col justify-between flex-shrink-0 z-20 transition-all duration-300">
+    <div>
+      <div class="p-6 flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+          <div class="p-2.5 bg-gradient-to-tr from-cyan-600 to-emerald-600 rounded-xl shadow-lg shadow-cyan-900/30">
+            <i class="fa-solid fa-soap text-white text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-md font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">LAUNDRY PRO 88</h1>
+            <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-widest">Executive Ledger</p>
+          </div>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-slate-400 hover:text-white focus:outline-none">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+
+      <nav id="nav-menu" class="p-4 space-y-1.5 hidden md:block">
+        <button onclick="switchTab('dashboard')" id="btn-dashboard" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-emerald-600/20 to-cyan-600/10 text-emerald-400 border border-emerald-500/20">
+          <i class="fa-solid fa-chart-line text-lg"></i>
+          <span>Dashboard Executive</span>
+        </button>
+        <button onclick="switchTab('input')" id="btn-input" class="menu-btn admin-element w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:bg-slate-800/60 hover:text-slate-200">
+          <i class="fa-solid fa-wallet text-lg"></i>
+          <span>Input Data Bulanan</span>
+        </button>
+        <button onclick="switchTab('settings')" id="btn-settings" class="menu-btn admin-element w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:bg-slate-800/60 hover:text-slate-200">
+          <i class="fa-solid fa-sliders text-lg"></i>
+          <span>Pengaturan Bisnis</span>
+        </button>
+        <button onclick="switchTab('laravel')" id="btn-laravel" class="menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:bg-slate-800/60 hover:text-slate-200">
+          <i class="fa-solid fa-code text-lg"></i>
+          <span>Skema & Deployment</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Mode Toggle Switch (Owner vs Public) -->
+    <div class="p-4 border-t border-slate-800 bg-slate-900/60">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-xs font-semibold text-slate-400">Mode Sistem</span>
+        </div>
+        <span id="badge-view" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/30">Owner Mode</span>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer w-full justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-800 hover:border-slate-700 transition">
+        <span class="text-xs font-medium text-slate-300">Public View (Read-Only)</span>
+        <input type="checkbox" id="public-view-toggle" onchange="togglePublicView()" class="sr-only peer">
+        <div class="relative w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-cyan-500 peer-checked:after:bg-slate-950"></div>
+      </label>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-950">
+    
+    <header class="bg-slate-900/40 backdrop-blur-md border-b border-slate-800/60 px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sticky top-0 z-10">
+      <div>
+        <h2 id="view-title" class="text-lg font-bold text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-chart-line text-emerald-500"></i> Dashboard Analitik Profit
+        </h2>
+        <p class="text-xs text-slate-400 mt-0.5">Pantauan laba bersih & pengeluaran multi-cabang Laundry Pro 88 (Terhubung Cloud)</p>
+      </div>
+      
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Cloud Database Status Indicator Widget -->
+        <div id="cloud-status-widget" class="flex items-center space-x-1.5 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px] font-bold">
+          <span class="relative flex h-2 w-2" id="cloud-status-ping">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+          </span>
+          <span id="cloud-status-text" class="text-amber-400">Menghubungkan Cloud...</span>
+        </div>
+
+        <div class="flex items-center space-x-1.5 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+          <i class="fa-solid fa-store text-xs text-cyan-400"></i>
+          <select id="filter-cabang" onchange="applyGlobalFilters()" class="bg-transparent text-xs text-slate-200 focus:outline-none font-semibold cursor-pointer">
+            <option value="all" class="bg-slate-900">Semua Cabang</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-1.5 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+          <i class="fa-solid fa-calendar text-xs text-emerald-400"></i>
+          <select id="filter-tahun" onchange="applyGlobalFilters()" class="bg-transparent text-xs text-slate-200 focus:outline-none font-semibold cursor-pointer">
+            <!-- Diisi secara dinamis oleh JavaScript -->
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <div id="public-view-banner" class="hidden bg-cyan-950/40 border-b border-cyan-500/20 px-6 py-2 flex items-center justify-between text-xs text-cyan-300">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-eye-slash text-cyan-400 animate-pulse"></i>
+        <span><strong>Public View Aktif:</strong> Dashboard ini berada dalam mode aman (read-only) untuk pemantauan eksternal.</span>
+      </div>
+    </div>
+
+    <!-- Toast Dialog -->
+    <div id="custom-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+      <div class="bg-slate-900 border border-emerald-500/40 shadow-xl shadow-emerald-950/20 rounded-xl p-4 flex items-center space-x-3">
+        <div class="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
+          <i class="fa-solid fa-circle-check text-lg"></i>
+        </div>
+        <div>
+          <h4 id="toast-title" class="text-sm font-bold text-slate-100">Berhasil</h4>
+          <p id="toast-message" class="text-xs text-slate-400 mt-0.5">Data berhasil disimpan.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Dialog Modal -->
+    <div id="custom-confirm" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl scale-95 transition-all duration-300 transform" id="confirm-box">
+        <div class="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xl mb-4">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h4 id="confirm-title" class="text-base font-bold text-slate-100 mb-1">Konfirmasi Tindakan</h4>
+        <p id="confirm-message" class="text-xs text-slate-400 mb-6">Apakah Anda yakin?</p>
+        <div class="flex gap-3 justify-end">
+          <button id="confirm-cancel-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition">Batal</button>
+          <button id="confirm-action-btn" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl transition">Hapus</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 space-y-6 max-w-7xl mx-auto w-full">
+
+      <!-- TAB: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-content space-y-6">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+            <div class="absolute right-0 top-0 translate-x-3 -translate-y-3 opacity-5 group-hover:scale-125 transition-all duration-500 text-emerald-500 text-8xl">
+              <i class="fa-solid fa-circle-dollar-to-slot"></i>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Pendapatan</span>
+              <div class="p-2 bg-emerald-500/10 rounded-xl text-emerald-400"><i class="fa-solid fa-arrow-trend-up text-xs"></i></div>
+            </div>
+            <div class="mt-4">
+              <h3 id="stat-revenue" class="text-2xl font-black text-slate-100 tracking-tight">Rp 0</h3>
+              <p class="text-[10px] text-slate-500 mt-1 flex items-center gap-1"><i class="fa-solid fa-chart-line text-emerald-500"></i> <span>Laju akumulasi uang masuk</span></p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
+            <div class="absolute right-0 top-0 translate-x-3 -translate-y-3 opacity-5 group-hover:scale-125 transition-all duration-500 text-rose-500 text-8xl">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Pengeluaran</span>
+              <div class="p-2 bg-rose-500/10 rounded-xl text-rose-400"><i class="fa-solid fa-arrow-trend-down text-xs"></i></div>
+            </div>
+            <div class="mt-4">
+              <h3 id="stat-expense" class="text-2xl font-black text-slate-100 tracking-tight">Rp 0</h3>
+              <p class="text-[10px] text-slate-500 mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-exclamation text-rose-500"></i> <span>Total biaya operasional</span></p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-cyan-500/20 transition-all duration-300">
+            <div class="absolute right-0 top-0 translate-x-3 -translate-y-3 opacity-5 group-hover:scale-125 transition-all duration-500 text-cyan-500 text-8xl">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Profit</span>
+              <div class="p-2 bg-cyan-500/10 rounded-xl text-cyan-400"><i class="fa-solid fa-shield-halved text-xs"></i></div>
+            </div>
+            <div class="mt-4">
+              <h3 id="stat-netprofit" class="text-2xl font-black text-slate-100 tracking-tight">Rp 0</h3>
+              <p class="text-[10px] text-slate-500 mt-1 flex items-center gap-1"><i class="fa-solid fa-shield-heart text-cyan-400"></i> <span>Pendapatan - Pengeluaran</span></p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl relative overflow-hidden group hover:border-violet-500/20 transition-all duration-300">
+            <div class="absolute right-0 top-0 translate-x-3 -translate-y-3 opacity-5 group-hover:scale-125 transition-all duration-500 text-violet-500 text-8xl">
+              <i class="fa-solid fa-percent"></i>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Profit Margin</span>
+              <div class="p-2 bg-violet-500/10 rounded-xl text-violet-400"><i class="fa-solid fa-chart-pie text-xs"></i></div>
+            </div>
+            <div class="mt-4">
+              <h3 id="stat-margin" class="text-2xl font-black text-slate-100 tracking-tight">0%</h3>
+              <p class="text-[10px] text-slate-500 mt-1 flex items-center gap-1"><i class="fa-solid fa-scale-balanced text-violet-400"></i> <span>Tingkat efisiensi laba bersih</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest">Share Kontribusi</span>
+                <h4 class="text-base font-bold text-slate-200 mt-0.5">Grafik Pendapatan Cabang</h4>
+              </div>
+              <div class="text-[10px] text-slate-400 font-semibold bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Doughnut Share</div>
+            </div>
+            <div class="relative h-[250px] w-full flex items-center justify-center">
+              <canvas id="chart-branch-revenue"></canvas>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest">Peta Laba Rugi Eksekutif</span>
+                  <h4 class="text-base font-bold text-slate-200 mt-0.5">Matriks Finansial Per Cabang</h4>
+                </div>
+                <div class="text-[10px] text-slate-500 font-semibold bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Real-time Ledger</div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-400">
+                  <thead class="text-slate-500 uppercase font-bold border-b border-slate-800/60">
+                    <tr>
+                      <th class="py-3">Cabang</th>
+                      <th class="py-3 text-right text-emerald-400">Pendapatan</th>
+                      <th class="py-3 text-right text-rose-400">Pengeluaran</th>
+                      <th class="py-3 text-right text-cyan-400">Net Profit</th>
+                      <th class="py-3 text-center">Margin %</th>
+                    </tr>
+                  </thead>
+                  <tbody id="branch-performance-body" class="divide-y divide-slate-800/40"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-6 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest">Kesehatan Keuangan</span>
+                <h4 class="text-base font-bold text-slate-200 mt-0.5">Grafik Pendapatan Bulanan</h4>
+              </div>
+              <div class="text-[10px] text-slate-400 font-semibold bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Area Chart</div>
+            </div>
+            <div class="relative h-[250px] w-full"><canvas id="chart-revenue"></canvas></div>
+          </div>
+
+          <div class="lg:col-span-6 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest">Indikator Vital Laba Bersih</span>
+                <h4 class="text-base font-bold text-slate-200 mt-0.5">Grafik Net Profit</h4>
+              </div>
+              <div class="text-[10px] text-slate-400 font-semibold bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Smooth Line</div>
+            </div>
+            <div class="relative h-[250px] w-full"><canvas id="chart-netprofit"></canvas></div>
+          </div>
+
+          <div class="lg:col-span-12 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-xs font-semibold text-rose-400 uppercase tracking-widest">Analisis Alokasi Operasional</span>
+                <h4 class="text-base font-bold text-slate-200 mt-0.5">Grafik Distribusi Pengeluaran</h4>
+              </div>
+              <div class="text-[10px] text-slate-400 font-semibold bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Stacked Bar</div>
+            </div>
+            <div class="relative h-[300px] w-full"><canvas id="chart-expense"></canvas></div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden">
+          <div class="p-6 border-b border-slate-800/60 flex items-center justify-between">
+            <div>
+              <h4 class="text-base font-bold text-slate-200">Log Aliran Keuangan Bulanan</h4>
+              <p class="text-xs text-slate-500 mt-0.5">Daftar transaksi profit ledger</p>
+            </div>
+            <button onclick="switchTab('input')" class="admin-element px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+              <i class="fa-solid fa-plus text-xs"></i> Tambah Log Baru
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-400">
+              <thead class="text-xs uppercase bg-slate-950/40 text-slate-500 font-bold border-b border-slate-800/40">
+                <tr>
+                  <th class="px-6 py-4">Cabang</th>
+                  <th class="px-6 py-4">Periode</th>
+                  <th class="px-6 py-4">Tipe</th>
+                  <th class="px-6 py-4">Kategori</th>
+                  <th class="px-6 py-4 text-right">Nominal</th>
+                  <th class="px-6 py-4">Keterangan</th>
+                  <th class="px-6 py-4 text-center admin-element">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-table-body" class="divide-y divide-slate-800/40"></tbody>
+            </table>
+          </div>
+          <div class="p-4 bg-slate-950/20 text-center text-xs text-slate-500 border-t border-slate-800/30">
+            Menampilkan data ledger tersaring berdasarkan filter global cabang dan tahun.
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: INPUT -->
+      <section id="tab-input" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div class="lg:col-span-1 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl space-y-4">
+            <div>
+              <h4 class="text-base font-bold text-slate-200">Catat Ledger Keuangan</h4>
+              <p class="text-xs text-slate-500 mt-0.5">Isi atau perbarui data keuangan bulanan di Cloud Database.</p>
+            </div>
+            <form id="ledger-form" onsubmit="saveLedgerEntry(event)" class="space-y-4">
+              <input type="hidden" id="edit-id" value="">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Cabang</label>
+                <select id="form-cabang" required class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition"></select>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1.5">Bulan</label>
+                  <select id="form-bulan" required class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition">
+                    <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tahun</label>
+                  <select id="form-tahun" required class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition">
+                    <!-- Diisi secara dinamis oleh JavaScript -->
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Tipe Transaksi</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:border-emerald-500/40 select-none">
+                    <input type="radio" name="form-tipe" value="pendapatan" checked onchange="toggleFormCategoryFilter()" class="sr-only peer">
+                    <span class="text-xs font-bold text-slate-400 peer-checked:text-emerald-400">🟢 Pendapatan</span>
+                    <div class="absolute inset-0 rounded-xl border border-transparent peer-checked:border-emerald-500/40 bg-emerald-500/5 pointer-events-none opacity-0 peer-checked:opacity-100 transition"></div>
+                  </label>
+                  <label class="relative flex items-center justify-center p-3 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:border-rose-500/40 select-none">
+                    <input type="radio" name="form-tipe" value="pengeluaran" onchange="toggleFormCategoryFilter()" class="sr-only peer">
+                    <span class="text-xs font-bold text-slate-400 peer-checked:text-rose-400">🔴 Pengeluaran</span>
+                    <div class="absolute inset-0 rounded-xl border border-transparent peer-checked:border-rose-500/40 bg-rose-500/5 pointer-events-none opacity-0 peer-checked:opacity-100 transition"></div>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Kategori</label>
+                <select id="form-kategori" required class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition"></select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Nominal Transaksi (Rupiah)</label>
+                <div class="relative flex items-center">
+                  <span class="absolute left-3 text-slate-500 text-sm font-bold">Rp</span>
+                  <input type="number" id="form-nominal" required min="1" oninput="updateLiveRupiahPreview()" placeholder="Masukkan angka" class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition">
+                </div>
+                <!-- Indikator live format Rupiah real-time untuk akurasi pembukuan -->
+                <p id="form-nominal-preview" class="text-[11px] text-emerald-400/80 mt-1 italic font-semibold">Rp 0</p>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Keterangan (Opsional)</label>
+                <textarea id="form-keterangan" rows="2" placeholder="Contoh: Pembelian deterjen, sewa gedung, dll" class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition"></textarea>
+              </div>
+              <div class="flex gap-2.5 pt-2">
+                <button type="submit" class="flex-1 py-2.5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-xs font-bold rounded-xl shadow-lg transition duration-200">
+                  <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Transaksi
+                </button>
+                <button type="button" onclick="resetLedgerForm()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-bold rounded-xl transition duration-200">Reset</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="lg:col-span-2 bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between min-h-[500px]">
+            <div class="space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <h4 class="text-base font-bold text-slate-200">Manajemen Log Ledger</h4>
+                  <p class="text-xs text-slate-500 mt-0.5">Kelola seluruh log transaksi secara dinamis.</p>
+                </div>
+                <!-- Search box dengan scope pencarian diperluas -->
+                <input type="text" id="ledger-search" oninput="renderLedgerManagementList()" placeholder="Cari cabang, kategori, dll..." class="bg-slate-950 text-xs border border-slate-800 rounded-xl px-3.5 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 transition w-full sm:w-48">
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-slate-800/60">
+                <table class="w-full text-left text-sm text-slate-400">
+                  <thead class="text-xs uppercase bg-slate-950/40 text-slate-500 font-bold border-b border-slate-800/40">
+                    <tr>
+                      <th class="px-4 py-3">Periode</th>
+                      <th class="px-4 py-3">Cabang</th>
+                      <th class="px-4 py-3">Tipe</th>
+                      <th class="px-4 py-3">Kategori</th>
+                      <th class="px-4 py-3 text-right">Nominal</th>
+                      <th class="px-4 py-3 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ledger-manage-table-body" class="divide-y divide-slate-800/40"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-800/60 text-center text-xs text-slate-500">
+              * Perubahan data akan langsung memicu penghitungan ulang formula profit secara real-time.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: SETTINGS -->
+      <section id="tab-settings" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- CARD SETUP FIREBASE KREDENSIAL CLOUD -->
+          <div class="bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl md:col-span-2 space-y-4">
+            <div>
+              <h4 class="text-base font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> Setup Kredensial Firebase Cloud Anda
+              </h4>
+              <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                Salin & tempel kredensial akun Firebase Anda langsung ke formulir di bawah ini untuk menghubungkan database eksternal pribadi Anda tanpa perlu mengedit file kode secara manual. Data kredensial akan disimpan dengan aman di penyimpanan browser lokal Anda.
+              </p>
+            </div>
+            <form onsubmit="saveFirebaseConfigUI(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">API Key (<span class="font-mono text-[10px]">apiKey</span>)</label>
+                <input type="text" id="fb-apiKey" required placeholder="AIzaSy..." class="w-full bg-slate-950 text-xs border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Project ID (<span class="font-mono text-[10px]">projectId</span>)</label>
+                <input type="text" id="fb-projectId" required placeholder="laundry-pro-88..." class="w-full bg-slate-950 text-xs border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">Auth Domain (<span class="font-mono text-[10px]">authDomain</span>)</label>
+                <input type="text" id="fb-authDomain" required placeholder="laundry-pro-88.firebaseapp.com" class="w-full bg-slate-950 text-xs border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5">App ID (<span class="font-mono text-[10px]">appId</span>)</label>
+                <input type="text" id="fb-appId" required placeholder="1:123456:web:1234abcd..." class="w-full bg-slate-950 text-xs border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+              </div>
+              <div class="md:col-span-2 flex justify-end gap-2 pt-2">
+                <button type="button" onclick="clearFirebaseConfigUI()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition">
+                  Gunakan Pengaturan Default
+                </button>
+                <button type="submit" class="px-5 py-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg transition">
+                  <i class="fa-solid fa-wifi mr-1"></i> Simpan & Hubungkan Database
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-base font-bold text-slate-200 flex items-center gap-2"><i class="fa-solid fa-store text-cyan-400"></i> Pengaturan Cabang Bisnis</h4>
+                <p class="text-xs text-slate-500 mt-0.5">Tambah atau hapus cabang tanpa menyentuh kode.</p>
+              </div>
+              <form onsubmit="addCabang(event)" class="flex gap-2">
+                <input type="text" id="cabang-input-name" required placeholder="Nama Cabang baru..." class="flex-1 bg-slate-950 text-sm border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+                <button type="submit" class="px-4 py-2.5 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-bold text-xs rounded-xl transition flex-shrink-0">
+                  <i class="fa-solid fa-plus mr-1"></i> Tambah
+                </button>
+              </form>
+              <div class="rounded-xl border border-slate-800/60 overflow-hidden bg-slate-950/40">
+                <ul id="cabang-list" class="divide-y divide-slate-800/40 max-h-[250px] overflow-y-auto"></ul>
+              </div>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-4"><i class="fa-solid fa-circle-info"></i> Menghapus cabang tidak akan menghapus data keuangan historis demi integritas laporan.</p>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col justify-between">
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-base font-bold text-slate-200 flex items-center gap-2"><i class="fa-solid fa-list text-emerald-400"></i> Kategori Keuangan</h4>
+                <p class="text-xs text-slate-500 mt-0.5">Kelola pos pendapatan dan pengeluaran.</p>
+              </div>
+              <form onsubmit="addKategori(event)" class="space-y-3">
+                <div class="flex gap-2">
+                  <input type="text" id="kategori-input-name" required placeholder="Nama Kategori baru..." class="flex-1 bg-slate-950 text-sm border border-slate-800 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+                  <select id="kategori-input-tipe" class="bg-slate-950 text-xs border border-slate-800 rounded-xl px-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 transition">
+                    <option value="pendapatan">Pendapatan</option>
+                    <option value="pengeluaran">Pengeluaran</option>
+                  </select>
+                </div>
+                <button type="submit" class="w-full py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white font-bold text-xs rounded-xl transition">
+                  <i class="fa-solid fa-plus mr-1"></i> Tambah Kategori Baru
+                </button>
+              </form>
+              <div class="rounded-xl border border-slate-800/60 overflow-hidden bg-slate-950/40">
+                <ul id="kategori-list" class="divide-y divide-slate-800/40 max-h-[180px] overflow-y-auto"></ul>
+              </div>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-4"><i class="fa-solid fa-circle-info"></i> Gunakan nama kategori yang spesifik untuk mempermudah visualisasi stacked bar.</p>
+          </div>
+
+          <!-- Fitur Maintenance & Reset Database Cloud -->
+          <div class="bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl md:col-span-2 flex flex-col justify-between">
+            <div>
+              <h4 class="text-base font-bold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-cloud text-emerald-500"></i> Pemeliharaan Sistem & Sinkronisasi Cloud
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5">Kelola data mentah sistem Laundry Pro 88 Anda langsung di Database Cloud.</p>
+            </div>
+            <div class="flex flex-wrap gap-3 mt-4">
+              <button onclick="triggerResetDemoData()" class="px-4 py-2.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                <i class="fa-solid fa-rotate-left"></i> Unggah & Reset ke Data Demo di Cloud
+              </button>
+              <button onclick="triggerClearAllData()" class="px-4 py-2.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                <i class="fa-solid fa-trash-can"></i> Kosongkan Seluruh Data Cloud
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: LARAVEL & DEPLOY -->
+      <section id="tab-laravel" class="tab-content hidden space-y-6">
+        
+        <div class="bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl space-y-6">
+          <!-- Panduan Deployment Online Gratis -->
+          <div class="border-b border-slate-800 pb-6">
+            <h4 class="text-base font-bold text-slate-200 flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-rocket text-cyan-400"></i> Panduan Deploy Online Gratis (Hingga 2050+)
+            </h4>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Anda dapat mengunggah (deploy) file dashboard tunggal <code class="bg-slate-950 px-1.5 py-0.5 rounded text-cyan-400 font-mono">index.html</code> ini agar bisa diakses oleh cabang mana saja secara real-time dan aman tanpa biaya sepeser pun.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300">
+              <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/60">
+                <h5 class="font-bold text-emerald-400 mb-1">Opsi 1: Netlify (Sangat Mudah)</h5>
+                <ol class="list-decimal pl-4 space-y-1 mt-1 text-slate-400">
+                  <li>Buat akun di <a href="https://netlify.com" target="_blank" class="text-cyan-400 underline">netlify.com</a>.</li>
+                  <li>Masuk ke menu <span class="text-slate-200">"Add new site"</span> &rarr; <span class="text-slate-200">"Deploy manually"</span>.</li>
+                  <li>Seret (drag & drop) file <strong class="text-slate-200">index.html</strong> ini ke dalam kotak drop.</li>
+                  <li>Selesai! Dashboard Anda sekarang online dengan URL acak ber-SSL aman (HTTPS).</li>
+                </ol>
+              </div>
+              <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/60">
+                <h5 class="font-bold text-emerald-400 mb-1">Opsi 2: Vercel (Terpopuler)</h5>
+                <ol class="list-decimal pl-4 space-y-1 mt-1 text-slate-400">
+                  <li>Buat akun di <a href="https://vercel.com" target="_blank" class="text-cyan-400 underline">vercel.com</a>.</li>
+                  <li>Unduh CLI Vercel atau buat repositori di GitHub berisi file <strong class="text-slate-200">index.html</strong>.</li>
+                  <li>Hubungkan GitHub Anda ke Vercel dan pilih import repositori tersebut.</li>
+                  <li>Vercel akan mendeploy dashboard Anda dalam waktu kurang dari 10 detik secara gratis.</li>
+                </ol>
+              </div>
+              <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/60">
+                <h5 class="font-bold text-emerald-400 mb-1">Opsi 3: GitHub Pages</h5>
+                <ol class="list-decimal pl-4 space-y-1 mt-1 text-slate-400">
+                  <li>Buat repositori baru bernama <span class="text-slate-200">laundry-dashboard</span> di GitHub Anda.</li>
+                  <li>Unggah file <strong class="text-slate-200">index.html</strong> ini ke repositori tersebut.</li>
+                  <li>Buka <span class="text-slate-200">Settings</span> &rarr; <span class="text-slate-200">Pages</span>, lalu set source ke branch <span class="text-slate-200">Main/Master</span>.</li>
+                  <li>URL publik Anda akan aktif di <code class="text-cyan-400">username.github.io/laundry-dashboard</code>.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-base font-bold text-slate-200 flex items-center gap-2"><i class="fa-brands fa-laravel text-rose-500"></i> Blueprint Migrasi Backend: Laravel</h4>
+            <p class="text-xs text-slate-500 mt-1">Cetak biru database relasional dan API jika di kemudian hari Anda ingin beralih ke server Laravel mandiri.</p>
+          </div>
+          <div class="border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2">
+            <nav class="flex space-x-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto">
+              <button onclick="switchCodeTab('sql-tab', 'btn-sql-tab')" id="btn-sql-tab" class="code-tab-btn py-2 px-3 text-xs font-bold border-b-2 border-emerald-500 text-emerald-400">SQL Raw Migration</button>
+              <button onclick="switchCodeTab('migration-tab', 'btn-migration-tab')" id="btn-migration-tab" class="code-tab-btn py-2 px-3 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200">Laravel Schema (PHP)</button>
+              <button onclick="switchCodeTab('controller-tab', 'btn-controller-tab')" id="btn-controller-tab" class="code-tab-btn py-2 px-3 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200">Laravel Controller API</button>
+            </nav>
+            <button onclick="copyActiveCode()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-semibold transition flex items-center gap-1">
+              <i class="fa-solid fa-copy"></i> Salin Kode
+            </button>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs overflow-x-auto leading-relaxed max-h-[400px] overflow-y-auto">
+            <pre id="sql-tab" class="code-content text-slate-300">-- DATABASE BLUEPRINT SCHEMA FOR LAUNDRY PRO 88
+
+CREATE TABLE `cabang` (
+  `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `nama` VARCHAR(100) NOT NULL UNIQUE,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `kategori_keuangan` (
+  `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `nama` VARCHAR(100) NOT NULL,
+  `tipe` ENUM('pendapatan', 'pengeluaran') NOT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `unique_nama_tipe` (`nama`, `tipe`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `log_keuangan_bulanan` (
+  `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `cabang_id` BIGINT UNSIGNED NOT NULL,
+  `bulan` TINYINT UNSIGNED NOT NULL,
+  `tahun` YEAR NOT NULL,
+  `tipe` ENUM('pendapatan', 'pengeluaran') NOT NULL,
+  `kategori_id` BIGINT UNSIGNED NOT NULL,
+  `nominal` DECIMAL(15,2) NOT NULL,
+  `keterangan` TEXT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_log_cabang` FOREIGN KEY (`cabang_id`) REFERENCES `cabang` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_log_kategori` FOREIGN KEY (`kategori_id`) REFERENCES `kategori_keuangan` (`id`) ON DELETE RESTRICT,
+  INDEX `idx_filter_global` (`cabang_id`, `tahun`, `bulan`),
+  INDEX `idx_tipe_transaksi` (`tipe`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;</pre>
+
+            <pre id="migration-tab" class="code-content hidden text-slate-300">&lt;?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateLaundryProLedgersTables extends Migration
+{
+    public function up()
+    {
+        Schema::create('cabang', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama', 100)->unique();
+            $table->timestamps();
+        });
+
+        Schema::create('kategori_keuangan', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama', 100);
+            $table->enum('tipe', ['pendapatan', 'pengeluaran']);
+            $table->timestamps();
+            $table->unique(['nama', 'tipe']);
+        });
+
+        Schema::create('log_keuangan_bulanan', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cabang_id')->constrained('cabang')->onDelete('cascade');
+            $table->tinyInteger('bulan')->unsigned();
+            $table->year('tahun');
+            $table->enum('tipe', ['pendapatan', 'pengeluaran']);
+            $table->foreignId('kategori_id')->constrained('kategori_keuangan');
+            $table->decimal('nominal', 15, 2);
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
+            $table->index(['cabang_id', 'tahun', 'bulan'], 'idx_composite_filter');
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('log_keuangan_bulanan');
+        Schema::dropIfExists('kategori_keuangan');
+        Schema::dropIfExists('cabang');
+    }
+}</pre>
+
+            <pre id="controller-tab" class="code-content hidden text-emerald-400">&lt;?php
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class ExecutiveFinanceController extends Controller
+{
+    public function getDashboardData(Request $request)
+    {
+        $cabangId = $request->query('cabang_id');
+        $tahun = $request->query('tahun', date('Y'));
+
+        $query = DB::table('log_keuangan_bulanan')->where('tahun', $tahun);
+        if ($cabangId && $cabangId !== 'all') {
+            $query->where('cabang_id', $cabangId);
+        }
+
+        $ledgerData = $query->get();
+
+        $totalPendapatan = $ledgerData->where('tipe', 'pendapatan')->sum('nominal');
+        $totalPengeluaran = $ledgerData->where('tipe', 'pengeluaran')->sum('nominal');
+        $netProfit = $totalPendapatan - $totalPengeluaran;
+        $profitMargin = $totalPendapatan > 0 ? round(($netProfit / $totalPendapatan) * 100, 2) : 0;
+
+        return response()->json([
+            'success' => true,
+            'summary' => compact('totalPendapatan', 'totalPengeluaran', 'netProfit', 'profitMargin')
+        ]);
+    }
+}</pre>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Firebase & System Scripts Core Module -->
+  <script type="module">
+    // Firebase CDN Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDocs, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Demo Database Defaults
+    const defaultCabang = [
+      { id: 1, nama: "Pekayon" },
+      { id: 2, nama: "Caman" },
+      { id: 3, nama: "Patriot" },
+      { id: 4, nama: "Setia Mekar" }
+    ];
+
+    const defaultKategori = [
+      { id: 1, nama: "Pendapatan Kiloan", tipe: "pendapatan" },
+      { id: 2, nama: "Pendapatan Satuan", tipe: "pendapatan" },
+      { id: 3, nama: "Pendapatan Express/Self-Service", tipe: "pendapatan" },
+      { id: 4, nama: "Sewa Tempat Cabang", tipe: "pengeluaran" },
+      { id: 5, nama: "Daya Listrik & Air PAM", tipe: "pengeluaran" },
+      { id: 6, nama: "Bahan Kimia & Pewangi", tipe: "pengeluaran" },
+      { id: 7, nama: "Maintenance Mesin Cuci", tipe: "pengeluaran" }
+    ];
+
+    const defaultLogKeuangan = [
+      { id: 101, cabang_id: 1, bulan: 1, tahun: 2026, tipe: "pendapatan", kategori_id: 1, nominal: 25000000, keterangan: "Cuci kiloan ramai awal tahun" },
+      { id: 102, cabang_id: 1, bulan: 1, tahun: 2026, tipe: "pendapatan", kategori_id: 2, nominal: 15000000, keterangan: "Cuci karpet & jas" },
+      { id: 103, cabang_id: 1, bulan: 1, tahun: 2026, tipe: "pengeluaran", kategori_id: 4, nominal: 6000000, keterangan: "Sewa ruko Jan" },
+      { id: 104, cabang_id: 1, bulan: 1, tahun: 2026, tipe: "pengeluaran", kategori_id: 5, nominal: 3500000, keterangan: "Tagihan listrik" },
+      { id: 105, cabang_id: 1, bulan: 1, tahun: 2026, tipe: "pengeluaran", kategori_id: 6, nominal: 2000000, keterangan: "Parfum & deterjen" },
+      { id: 106, cabang_id: 1, bulan: 2, tahun: 2026, tipe: "pendapatan", kategori_id: 1, nominal: 28000000, keterangan: "Cuci kiloan meningkat" },
+      { id: 107, cabang_id: 1, bulan: 2, tahun: 2026, tipe: "pendapatan", kategori_id: 3, nominal: 8000000, keterangan: "Express laundry" },
+      { id: 108, cabang_id: 1, bulan: 2, tahun: 2026, tipe: "pengeluaran", kategori_id: 5, nominal: 4000000, keterangan: "Token listrik tambahan" },
+      { id: 109, cabang_id: 1, bulan: 2, tahun: 2026, tipe: "pengeluaran", kategori_id: 7, nominal: 1500000, keterangan: "Ganti belt kompresor" },
+      { id: 110, cabang_id: 1, bulan: 3, tahun: 2026, tipe: "pendapatan", kategori_id: 1, nominal: 30000000, keterangan: "Peak season" },
+      { id: 111, cabang_id: 1, bulan: 3, tahun: 2026, tipe: "pengeluaran", kategori_id: 5, nominal: 3800000, keterangan: "Utilitas" },
+      { id: 112, cabang_id: 1, bulan: 3, tahun: 2026, tipe: "pengeluaran", kategori_id: 6, nominal: 4500000, keterangan: "Borongan parfum" },
+      
+      { id: 201, cabang_id: 2, bulan: 1, tahun: 2026, tipe: "pendapatan", kategori_id: 1, nominal: 18000000, keterangan: "Sirkulasi aman" },
+      { id: 202, cabang_id: 2, bulan: 1, tahun: 2026, tipe: "pengeluaran", kategori_id: 4, nominal: 5000000, keterangan: "Sewa ruko" },
+      { id: 203, cabang_id: 2, bulan: 2, tahun: 2026, tipe: "pendapatan", kategori_id: 1, nominal: 22000000, keterangan: "Express melambung" },
+      { id: 204, cabang_id: 2, bulan: 2, tahun: 2026, tipe: "pengeluaran", kategori_id: 5, nominal: 2500000, keterangan: "Utilitas" }
+    ];
+
+    // In-Memory Database Variables (Linked with Firebase real-time sync)
+    let dbCabang = [];
+    let dbKategori = [];
+    let dbLogKeuangan = [];
+
+    // Active Code Tab for Copying
+    let activeCodeTab = 'sql-tab';
+
+    // Chart instances mapping references
+    let chartRevenueInstance = null;
+    let chartExpenseInstance = null;
+    let chartNetProfitInstance = null;
+    let chartBranchRevenueInstance = null;
+
+    const namaBulanArr = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
+    // Format currency to IDR Rupiah
+    function formatRupiah(number) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+    }
+
+    // Modal confirm dialog controller
+    let confirmCallback = null;
+    function requestConfirmation(title, message, callback) {
+      const modal = document.getElementById('custom-confirm');
+      const box = document.getElementById('confirm-box');
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-message').textContent = message;
+      modal.classList.remove('pointer-events-none', 'opacity-0');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+      confirmCallback = callback;
+    }
+
+    document.getElementById('confirm-cancel-btn').addEventListener('click', closeConfirm);
+    document.getElementById('confirm-action-btn').addEventListener('click', () => {
+      if (confirmCallback) confirmCallback();
+      closeConfirm();
+    });
+
+    function closeConfirm() {
+      const modal = document.getElementById('custom-confirm');
+      const box = document.getElementById('confirm-box');
+      modal.classList.add('pointer-events-none', 'opacity-0');
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
+      confirmCallback = null;
+    }
+
+    // Dynamically populate year options from 2025 to 2050
+    function populateYearDropdowns() {
+      const filterTahun = document.getElementById('filter-tahun');
+      const formTahun = document.getElementById('form-tahun');
+      
+      filterTahun.innerHTML = '';
+      formTahun.innerHTML = '';
+      
+      for (let thn = 2025; thn <= 2050; thn++) {
+        const optFilter = document.createElement('option');
+        optFilter.value = thn;
+        optFilter.className = 'bg-slate-900';
+        optFilter.textContent = thn;
+        filterTahun.appendChild(optFilter);
+        
+        const optForm = document.createElement('option');
+        optForm.value = thn;
+        optForm.textContent = thn;
+        formTahun.appendChild(optForm);
+      }
+      
+      const currentYear = new Date().getFullYear();
+      const defaultYear = (currentYear >= 2025 && currentYear <= 2050) ? currentYear : 2026;
+      
+      filterTahun.value = defaultYear;
+      formTahun.value = defaultYear;
+    }
+
+    // =========================================================================
+    // 🔴 TEMPAT MENYALIN CONFIG/KREDENSIAL FIREBASE ANDA (CARA HARDCODE) 🔴
+    // =========================================================================
+    // Salin dan ganti objek di bawah ini dengan kredensial Firebase Console milik Anda.
+    // Jika dibiarkan kosong, Anda tetap dapat memasukkannya langsung via menu "Pengaturan" di UI.
+    const myHardcodedFirebaseConfig = {
+      apiKey: "AIzaSyBlAvVQGavlvfHY6BqEL5qXiTz3PMkzXiI",
+      authDomain: "dashboard-laundrypro-88.firebaseapp.com",
+      projectId: "dashboard-laundrypro-88",
+      storageBucket: "dashboard-laundrypro-88.firebasestorage.app",
+      messagingSenderId: "976164544845",
+      appId: "1:976164544845:web:65ff0f7e7dc81eab305704"
+    };
+
+    // Global App ID & Environment configuration
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'lpro88-ledger-2050';
+    
+    // Loaded firebase configuration helper
+    let firebaseConfig = {};
+    let auth, db, user = null;
+    let unsubscribes = []; // Holder for realtime listeners to enable clean rebuilds
+
+    // Load active credentials safely from LocalStorage, hardcode fallback, or dynamic injected config
+    function getActiveFirebaseConfig() {
+      try {
+        const savedConfig = localStorage.getItem('lpro88_custom_firebase_config');
+        if (savedConfig) {
+          const parsed = JSON.parse(savedConfig);
+          // Validasi minimal format kredensial
+          if (parsed.apiKey && parsed.apiKey !== "CONTOH_API_KEY_ANDA_DI_SINI_12345") {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.error("Gagal membaca LocalStorage firebase config", e);
+      }
+
+      // Gunakan config hardcode jika nilainya telah diset oleh pengguna
+      if (myHardcodedFirebaseConfig.apiKey && myHardcodedFirebaseConfig.apiKey !== "CONTOH_API_KEY_ANDA_DI_SINI_12345") {
+        return myHardcodedFirebaseConfig;
+      }
+
+      // Jika tidak ada custom UI maupun hardcoded, gunakan global dynamic config dari environment
+      return typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : myHardcodedFirebaseConfig;
+    }
+
+    // Populate Firebase config inputs in settings tab UI on startup
+    function fillFirebaseConfigUI() {
+      const active = getActiveFirebaseConfig();
+      // Set to fields if they are not the placeholder defaults
+      if (active.apiKey && active.apiKey !== "CONTOH_API_KEY_ANDA_DI_SINI_12345" && active.apiKey !== "") {
+        document.getElementById('fb-apiKey').value = active.apiKey;
+        document.getElementById('fb-projectId').value = active.projectId || '';
+        document.getElementById('fb-authDomain').value = active.authDomain || '';
+        document.getElementById('fb-appId').value = active.appId || '';
+      }
+    }
+
+    // Save configuration from UI panel
+    async function saveFirebaseConfigUI(e) {
+      e.preventDefault();
+      const apiKey = document.getElementById('fb-apiKey').value.trim();
+      const projectId = document.getElementById('fb-projectId').value.trim();
+      const authDomain = document.getElementById('fb-authDomain').value.trim();
+      const appIdField = document.getElementById('fb-appId').value.trim();
+
+      const newConfig = {
+        apiKey,
+        projectId,
+        authDomain,
+        storageBucket: `${projectId}.appspot.com`,
+        messagingSenderId: "1234567890",
+        appId: appIdField
+      };
+
+      try {
+        localStorage.setItem('lpro88_custom_firebase_config', JSON.stringify(newConfig));
+        showToast("Firebase Disimpan", "Mencoba menghubungkan ulang ke database cloud baru...", "info");
+        
+        // Hancurkan listeners lama dan inisialisasi ulang instance Firebase
+        unsubscribes.forEach(unsub => unsub());
+        unsubscribes = [];
+        
+        await initFirebaseAndAuth();
+      } catch (err) {
+        showToast("Gagal Menyimpan", "Gagal menyimpan konfigurasi ke browser.", "danger");
+      }
+    }
+
+    // Reset back to placeholder configuration values
+    async function clearFirebaseConfigUI() {
+      requestConfirmation(
+        "Gunakan Kredensial Default?",
+        "Kredensial kustom Anda akan dihapus dan sistem akan kembali menggunakan instance database default. Lanjutkan?",
+        async () => {
+          localStorage.removeItem('lpro88_custom_firebase_config');
+          document.getElementById('fb-apiKey').value = '';
+          document.getElementById('fb-projectId').value = '';
+          document.getElementById('fb-authDomain').value = '';
+          document.getElementById('fb-appId').value = '';
+          
+          showToast("Kembali ke Default", "Membuka ulang koneksi ke database default...", "info");
+          
+          unsubscribes.forEach(unsub => unsub());
+          unsubscribes = [];
+          
+          await initFirebaseAndAuth();
+        }
+      );
+    }
+
+    // RULE 3 & 1: Authentication and Strict Path Database Init
+    async function initFirebaseAndAuth() {
+      firebaseConfig = getActiveFirebaseConfig();
+      updateCloudStatusWidget(false, "Menghubungkan...");
+
+      try {
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        // Authenticate anonymously or with token first
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          user = (await signInWithCustomToken(auth, __initial_auth_token)).user;
+        } else {
+          user = (await signInAnonymously(auth)).user;
+        }
+
+        onAuthStateChanged(auth, (u) => {
+          user = u;
+          updateCloudStatusWidget(!!user, user ? "Cloud Connected" : "Cloud Disconnected");
+        });
+
+        if (user) {
+          updateCloudStatusWidget(true, "Cloud Connected");
+          setupRealtimeListeners();
+        }
+      } catch (error) {
+        console.error("Firebase Auth Exception:", error);
+        updateCloudStatusWidget(false, "Kredensial Tidak Valid");
+        showToast("Koneksi Cloud Gagal", "Gagal menghubungkan ke Firebase. Periksa kembali kredensial Anda di menu Pengaturan.", "danger");
+      }
+    }
+
+    // Update Status Indicator Widget
+    function updateCloudStatusWidget(isConnected, textMessage) {
+      const widget = document.getElementById('cloud-status-widget');
+      const ping = document.getElementById('cloud-status-ping');
+      const text = document.getElementById('cloud-status-text');
+
+      if (isConnected) {
+        ping.innerHTML = `
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        `;
+        text.className = "text-emerald-400";
+        text.textContent = textMessage || "Cloud Connected";
+      } else {
+        const isConnecting = textMessage === "Menghubungkan...";
+        const pingColor = isConnecting ? "bg-amber-500" : "bg-rose-500";
+        const pingAnimate = isConnecting ? "bg-amber-400" : "bg-rose-400";
+        ping.innerHTML = `
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${pingAnimate} opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 ${pingColor}"></span>
+        `;
+        text.className = isConnecting ? "text-amber-400" : "text-rose-400";
+        text.textContent = textMessage || "Cloud Disconnected";
+      }
+    }
+
+    // RULE 1: STRICT PATHS LISTENERS FOR REAL-TIME CLOUD DATA SYNC
+    function setupRealtimeListeners() {
+      if (!user) return;
+
+      const cabangCol = collection(db, 'artifacts', appId, 'public', 'data', 'cabang');
+      const kategoriCol = collection(db, 'artifacts', appId, 'public', 'data', 'kategori');
+      const logKeuanganCol = collection(db, 'artifacts', appId, 'public', 'data', 'logKeuangan');
+
+      // Realtime Cabang listener
+      const unsubCabang = onSnapshot(cabangCol, (snapshot) => {
+        dbCabang = [];
+        snapshot.forEach(doc => dbCabang.push(doc.data()));
+        
+        // Auto seed cloud database on empty state
+        if (dbCabang.length === 0) {
+          seedDefaultCollections();
+          return;
+        }
+
+        populateFilterDropdowns();
+        populateFormDropdowns();
+        renderSettingsLists();
+        applyGlobalFilters();
+      }, (err) => {
+        console.error("Cabang listener error:", err);
+      });
+      unsubscribes.push(unsubCabang);
+
+      // Realtime Kategori listener
+      const unsubKategori = onSnapshot(kategoriCol, (snapshot) => {
+        dbKategori = [];
+        snapshot.forEach(doc => dbKategori.push(doc.data()));
+        
+        populateFormDropdowns();
+        renderSettingsLists();
+        applyGlobalFilters();
+      }, (err) => {
+        console.error("Kategori listener error:", err);
+      });
+      unsubscribes.push(unsubKategori);
+
+      // Realtime Log Keuangan listener
+      const unsubLog = onSnapshot(logKeuanganCol, (snapshot) => {
+        dbLogKeuangan = [];
+        snapshot.forEach(doc => dbLogKeuangan.push(doc.data()));
+        
+        applyGlobalFilters();
+        renderLedgerManagementList();
+      }, (err) => {
+        console.error("Log Keuangan listener error:", err);
+      });
+      unsubscribes.push(unsubLog);
+    }
+
+    // Auto load mock default datasets to Cloud on empty database init
+    async function seedDefaultCollections() {
+      if (!user) return;
+      try {
+        for (const item of defaultCabang) {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cabang', String(item.id)), item);
+        }
+        for (const item of defaultKategori) {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'kategori', String(item.id)), item);
+        }
+        for (const item of defaultLogKeuangan) {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'logKeuangan', String(item.id)), item);
+        }
+        showToast("Database Diinisialisasi", "Selamat Datang! Struktur data cloud awal siap digunakan.", "success");
+      } catch (err) {
+        console.error("Error seeding default cloud database:", err);
+      }
+    }
+
+    function populateFilterDropdowns() {
+      const filterCabang = document.getElementById('filter-cabang');
+      filterCabang.innerHTML = '<option value="all" class="bg-slate-900">Semua Cabang</option>';
+      dbCabang.forEach(c => {
+        const option = document.createElement('option');
+        option.value = c.id;
+        option.className = 'bg-slate-900';
+        option.textContent = `Cabang ${c.nama}`;
+        filterCabang.appendChild(option);
+      });
+    }
+
+    function populateFormDropdowns() {
+      const formCabang = document.getElementById('form-cabang');
+      formCabang.innerHTML = '';
+      dbCabang.forEach(c => {
+        const option = document.createElement('option');
+        option.value = c.id;
+        option.textContent = c.nama;
+        formCabang.appendChild(option);
+      });
+      toggleFormCategoryFilter();
+    }
+
+    function toggleFormCategoryFilter() {
+      const formKategori = document.getElementById('form-kategori');
+      const selectedTipe = document.querySelector('input[name="form-tipe"]:checked').value;
+      formKategori.innerHTML = '';
+      dbKategori.filter(k => k.tipe === selectedTipe).forEach(k => {
+        const option = document.createElement('option');
+        option.value = k.id;
+        option.textContent = k.nama;
+        formKategori.appendChild(option);
+      });
+    }
+
+    // Live display of financial input nominal as user types
+    function updateLiveRupiahPreview() {
+      const val = parseFloat(document.getElementById('form-nominal').value) || 0;
+      document.getElementById('form-nominal-preview').textContent = val > 0 ? formatRupiah(val) : 'Rp 0';
+    }
+
+    // Tab switcher navigation controller
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+      document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.className = "menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:bg-slate-800/60 hover:text-slate-200";
+      });
+
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "menu-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-gradient-to-r from-emerald-600/20 to-cyan-600/10 text-emerald-400 border border-emerald-500/20";
+      }
+
+      const viewTitle = document.getElementById('view-title');
+      if (tabId === 'dashboard') {
+        viewTitle.innerHTML = '<i class="fa-solid fa-chart-line text-emerald-500"></i> Dashboard Analitik Profit';
+        applyGlobalFilters();
+      } else if (tabId === 'input') {
+        viewTitle.innerHTML = '<i class="fa-solid fa-wallet text-emerald-500"></i> Input Data Bulanan';
+        renderLedgerManagementList();
+      } else if (tabId === 'settings') {
+        viewTitle.innerHTML = '<i class="fa-solid fa-sliders text-cyan-400"></i> Pengaturan Cabang & Kategori';
+        fillFirebaseConfigUI();
+        renderSettingsLists();
+      } else if (tabId === 'laravel') {
+        viewTitle.innerHTML = '<i class="fa-brands fa-laravel text-rose-500"></i> Cetak Biru & Deployment';
+      }
+
+      if (window.innerWidth < 768) {
+        document.getElementById('nav-menu').classList.add('hidden');
+      }
+    }
+
+    // RULE 2: JavaScript client-side memory filter and calculations to keep query structures simple
+    function applyGlobalFilters() {
+      const filterCabangValue = document.getElementById('filter-cabang').value;
+      const filterTahunValue = parseInt(document.getElementById('filter-tahun').value) || 2026;
+
+      let filteredLogs = dbLogKeuangan.filter(log => log.tahun === filterTahunValue);
+      if (filterCabangValue !== 'all') {
+        filteredLogs = filteredLogs.filter(log => log.cabang_id === parseInt(filterCabangValue));
+      }
+
+      let totalPendapatan = 0, totalPengeluaran = 0;
+      filteredLogs.forEach(log => {
+        if (log.tipe === 'pendapatan') totalPendapatan += Number(log.nominal);
+        else totalPengeluaran += Number(log.nominal);
+      });
+
+      const netProfit = totalPendapatan - totalPengeluaran;
+      const profitMargin = totalPendapatan > 0 ? ((netProfit / totalPendapatan) * 100).toFixed(1) : 0;
+
+      document.getElementById('stat-revenue').textContent = formatRupiah(totalPendapatan);
+      document.getElementById('stat-expense').textContent = formatRupiah(totalPengeluaran);
+      document.getElementById('stat-netprofit').textContent = formatRupiah(netProfit);
+      document.getElementById('stat-margin').textContent = `${profitMargin}%`;
+      document.getElementById('stat-netprofit').className = netProfit < 0 ? "text-2xl font-black text-rose-500 tracking-tight" : "text-2xl font-black text-slate-100 tracking-tight";
+
+      // Calculate performance by branches
+      const branchPerformanceData = dbCabang.map(branch => {
+        const branchLogs = dbLogKeuangan.filter(log => log.cabang_id === branch.id && log.tahun === filterTahunValue);
+        let rev = 0, exp = 0;
+        branchLogs.forEach(log => {
+          if (log.tipe === 'pendapatan') rev += Number(log.nominal);
+          else exp += Number(log.nominal);
+        });
+        const np = rev - exp;
+        const margin = rev > 0 ? ((np / rev) * 100).toFixed(1) : 0;
+        return { id: branch.id, nama: branch.nama, revenue: rev, expense: exp, netProfit: np, margin };
+      });
+
+      const branchPerformanceBody = document.getElementById('branch-performance-body');
+      branchPerformanceBody.innerHTML = '';
+      if (branchPerformanceData.length === 0) {
+        branchPerformanceBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500 text-xs"><i class="fa-solid fa-folder-open text-xl mb-1 block"></i>Belum ada data cabang. Silakan daftarkan ruko cabang di Pengaturan.</td></tr>`;
+      } else {
+        branchPerformanceData.forEach(bp => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-800/20 transition duration-150";
+          const npColorClass = bp.netProfit < 0 ? 'text-rose-500' : 'text-cyan-400';
+          const marginColorClass = bp.margin < 0 ? 'bg-rose-950/40 text-rose-400 border-rose-500/20' : 'bg-cyan-950/40 text-cyan-400 border-cyan-500/20';
+          tr.innerHTML = `
+            <td class="py-3.5 font-bold text-slate-200">Cabang ${bp.nama}</td>
+            <td class="py-3.5 text-right font-medium text-emerald-400">${formatRupiah(bp.revenue)}</td>
+            <td class="py-3.5 text-right font-medium text-rose-400">${formatRupiah(bp.expense)}</td>
+            <td class="py-3.5 text-right font-black ${npColorClass}">${formatRupiah(bp.netProfit)}</td>
+            <td class="py-3.5 text-center"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold border ${marginColorClass}">${bp.margin}%</span></td>
+          `;
+          branchPerformanceBody.appendChild(tr);
+        });
+      }
+
+      renderBranchRevenueChart(branchPerformanceData);
+
+      const dataPendapatanBulan = Array(12).fill(0);
+      const dataPengeluaranBulan = Array(12).fill(0);
+      const dataLabaBulan = Array(12).fill(0);
+      const categoriesExpense = dbKategori.filter(k => k.tipe === 'pengeluaran');
+      const datasetPengeluaranPerKategori = {};
+      categoriesExpense.forEach(cat => { datasetPengeluaranPerKategori[cat.id] = Array(12).fill(0); });
+
+      filteredLogs.forEach(log => {
+        const blnIndex = log.bulan - 1;
+        if (log.tipe === 'pendapatan') {
+          dataPendapatanBulan[blnIndex] += Number(log.nominal);
+        } else {
+          dataPengeluaranBulan[blnIndex] += Number(log.nominal);
+          if (datasetPengeluaranPerKategori[log.kategori_id] !== undefined) {
+            datasetPengeluaranPerKategori[log.kategori_id][blnIndex] += Number(log.nominal);
+          }
+        }
+      });
+
+      for (let i = 0; i < 12; i++) dataLabaBulan[i] = dataPendapatanBulan[i] - dataPengeluaranBulan[i];
+
+      renderRevenueChart(dataPendapatanBulan);
+      renderExpenseChart(categoriesExpense, datasetPengeluaranPerKategori);
+      renderNetProfitChart(dataLabaBulan);
+      renderRecentTransactionsTable(filteredLogs);
+    }
+
+    function renderRevenueChart(data) {
+      const ctx = document.getElementById('chart-revenue').getContext('2d');
+      if (chartRevenueInstance) chartRevenueInstance.destroy();
+      const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
+      gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+      chartRevenueInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels: namaBulanArr, datasets: [{ label: 'Total Uang Masuk', data, borderColor: '#10b981', borderWidth: 3, backgroundColor: gradient, fill: true, tension: 0.4, pointBackgroundColor: '#10b981', pointHoverRadius: 7 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e293b', titleColor: '#94a3b8', bodyColor: '#f8fafc', borderColor: '#334155', borderWidth: 1, callbacks: { label: ctx => `Pendapatan: ${formatRupiah(ctx.raw)}` } } }, scales: { y: { grid: { color: 'rgba(51,65,85,0.2)' }, ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => formatRupiah(v) } }, x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } } } }
+      });
+    }
+
+    function renderExpenseChart(categories, datasetMap) {
+      const ctx = document.getElementById('chart-expense').getContext('2d');
+      if (chartExpenseInstance) chartExpenseInstance.destroy();
+      const barColors = ['#f43f5e', '#fb7185', '#fda4af', '#e11d48', '#be123c', '#9f1239', '#ffe4e6'];
+      const datasets = categories.map((cat, index) => ({ label: cat.nama, data: datasetMap[cat.id], backgroundColor: barColors[index % barColors.length], borderRadius: 4 }));
+      chartExpenseInstance = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: namaBulanArr, datasets },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#1e293b', titleColor: '#94a3b8', bodyColor: '#f8fafc', borderColor: '#334155', borderWidth: 1, callbacks: { label: ctx => `${ctx.dataset.label}: ${formatRupiah(ctx.raw)}` } } }, scales: { y: { stacked: true, grid: { color: 'rgba(51,65,85,0.2)' }, ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => formatRupiah(v) } }, x: { stacked: true, grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } } } }
+      });
+    }
+
+    function renderNetProfitChart(data) {
+      const ctx = document.getElementById('chart-netprofit').getContext('2d');
+      if (chartNetProfitInstance) chartNetProfitInstance.destroy();
+      const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+      gradient.addColorStop(0, 'rgba(6, 182, 212, 0.3)');
+      gradient.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
+      chartNetProfitInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels: namaBulanArr, datasets: [{ label: 'Net Profit', data, borderColor: '#06b6d4', borderWidth: 3, backgroundColor: gradient, fill: true, tension: 0.45, pointBackgroundColor: '#06b6d4', pointHoverRadius: 7 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1e293b', titleColor: '#94a3b8', bodyColor: '#f8fafc', borderColor: '#334155', borderWidth: 1, callbacks: { label: ctx => `Laba Bersih: ${formatRupiah(ctx.raw)}` } } }, scales: { y: { grid: { color: 'rgba(51,65,85,0.2)' }, ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => formatRupiah(v) } }, x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } } } }
+      });
+    }
+
+    function renderBranchRevenueChart(branchData) {
+      const ctx = document.getElementById('chart-branch-revenue').getContext('2d');
+      if (chartBranchRevenueInstance) chartBranchRevenueInstance.destroy();
+      const paletteColors = ['#10b981', '#06b6d4', '#8b5cf6', '#f59e0b', '#3b82f6', '#ec4899'];
+      chartBranchRevenueInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels: branchData.map(b => `Cabang ${b.nama}`), datasets: [{ data: branchData.map(b => b.revenue), backgroundColor: paletteColors.slice(0, branchData.length), borderWidth: 2, borderColor: '#0f172a', hoverOffset: 12 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 10 }, boxWidth: 10, padding: 12 } }, tooltip: { backgroundColor: '#1e293b', titleColor: '#94a3b8', bodyColor: '#f8fafc', borderColor: '#334155', borderWidth: 1, callbacks: { label: ctx => { const total = ctx.dataset.data.reduce((a, b) => a + b, 0); const pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0; return ` ${ctx.label}: ${formatRupiah(ctx.raw)} (${pct}%)`; } } } }, cutout: '70%' }
+      });
+    }
+
+    function renderRecentTransactionsTable(logs) {
+      const tbody = document.getElementById('ledger-table-body');
+      tbody.innerHTML = '';
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-slate-500 text-xs"><i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-700 block"></i>Tidak ada data ledger.</td></tr>`;
+        return;
+      }
+      [...logs].sort((a,b) => b.bulan - a.bulan).forEach(log => {
+        const cabang = dbCabang.find(c => c.id === log.cabang_id)?.nama || `Cabang #${log.cabang_id} (N/A)`;
+        const kategori = dbKategori.find(k => k.id === log.kategori_id)?.nama || `Kategori #${log.kategori_id} (N/A)`;
+        
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/20 transition duration-150";
+        const badgeClass = log.tipe === 'pendapatan' ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/20' : 'bg-rose-950/60 text-rose-400 border border-rose-500/20';
+        tr.innerHTML = `
+          <td class="px-6 py-4 font-semibold text-slate-200">${cabang}</td>
+          <td class="px-6 py-4 text-xs font-medium text-slate-300">${namaBulanArr[log.bulan - 1]} ${log.tahun}</td>
+          <td class="px-6 py-4"><span class="px-2.5 py-1 text-[11px] font-bold rounded-lg ${badgeClass} uppercase">${log.tipe}</span></td>
+          <td class="px-6 py-4 text-xs text-slate-300 font-medium">${kategori}</td>
+          <td class="px-6 py-4 text-right font-bold ${log.tipe === 'pendapatan' ? 'text-emerald-400' : 'text-slate-200'}">${log.tipe === 'pendapatan' ? '+' : '-'} ${formatRupiah(log.nominal)}</td>
+          <td class="px-6 py-4 text-xs max-w-[200px] truncate" title="${log.keterangan || ''}">${log.keterangan || '-'}</td>
+          <td class="px-6 py-4 text-center admin-element">
+            <div class="flex items-center justify-center gap-2">
+              <button onclick="editLedger(${log.id})" class="text-cyan-400 hover:text-cyan-300 p-1.5 hover:bg-slate-800 rounded-lg transition"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="deleteLedger(${log.id})" class="text-rose-400 hover:text-rose-300 p-1.5 hover:bg-slate-800 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      applyPublicModeUIVisibility();
+    }
+
+    function renderLedgerManagementList() {
+      const tbody = document.getElementById('ledger-manage-table-body');
+      const searchQuery = document.getElementById('ledger-search').value.toLowerCase();
+      tbody.innerHTML = '';
+      
+      let filtered = dbLogKeuangan;
+      
+      if (searchQuery) {
+        filtered = filtered.filter(log => {
+          const cabangName = dbCabang.find(c => c.id === log.cabang_id)?.nama.toLowerCase() || '';
+          const kategoriName = dbKategori.find(k => k.id === log.kategori_id)?.nama.toLowerCase() || '';
+          const keterangan = log.keterangan ? log.keterangan.toLowerCase() : '';
+          const tipe = log.tipe.toLowerCase();
+          const bulan = namaBulanArr[log.bulan - 1].toLowerCase();
+          const tahun = log.tahun.toString();
+          return cabangName.includes(searchQuery) ||
+                 kategoriName.includes(searchQuery) ||
+                 keterangan.includes(searchQuery) ||
+                 tipe.includes(searchQuery) ||
+                 bulan.includes(searchQuery) ||
+                 tahun.includes(searchQuery);
+        });
+      }
+      
+      filtered.sort((a, b) => b.tahun - a.tahun || b.bulan - a.bulan);
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500 text-xs">Tidak ada log yang cocok.</td></tr>`;
+        return;
+      }
+      
+      filtered.forEach(log => {
+        const cabang = dbCabang.find(c => c.id === log.cabang_id)?.nama || `Cabang #${log.cabang_id}`;
+        const kategori = dbKategori.find(k => k.id === log.kategori_id)?.nama || `Kategori #${log.kategori_id}`;
+        const isIncome = log.tipe === 'pendapatan';
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/30 transition duration-150 text-xs";
+        tr.innerHTML = `
+          <td class="px-4 py-3 text-slate-400 font-medium">${namaBulanArr[log.bulan - 1]} ${log.tahun}</td>
+          <td class="px-4 py-3 text-slate-200 font-semibold">${cabang}</td>
+          <td class="px-4 py-3 font-semibold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">${isIncome ? '🟢 Pendapatan' : '🔴 Pengeluaran'}</td>
+          <td class="px-4 py-3 text-slate-300">${kategori}</td>
+          <td class="px-4 py-3 text-right font-bold text-slate-100">${formatRupiah(log.nominal)}</td>
+          <td class="px-4 py-3 text-center">
+            <div class="flex items-center justify-center gap-1">
+              <button onclick="editLedger(${log.id})" class="text-cyan-400 hover:bg-slate-800 p-1.5 rounded-lg transition"><i class="fa-solid fa-pen text-xs"></i></button>
+              <button onclick="deleteLedger(${log.id})" class="text-rose-400 hover:bg-slate-800 p-1.5 rounded-lg transition"><i class="fa-solid fa-trash text-xs"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editLedger(id) {
+      const log = dbLogKeuangan.find(l => l.id === id);
+      if (!log) return;
+      switchTab('input');
+      document.getElementById('edit-id').value = log.id;
+      document.getElementById('form-cabang').value = log.cabang_id;
+      document.getElementById('form-bulan').value = log.bulan;
+      document.getElementById('form-tahun').value = log.tahun;
+      document.getElementById('form-nominal').value = log.nominal;
+      document.getElementById('form-keterangan').value = log.keterangan || '';
+      document.querySelector(`input[name="form-tipe"][value="${log.tipe}"]`).checked = true;
+      toggleFormCategoryFilter();
+      document.getElementById('form-kategori').value = log.kategori_id;
+      updateLiveRupiahPreview();
+      showToast("Mode Edit Aktif", "Silakan perbarui data & simpan kembali ke Cloud.", "info");
+    }
+
+    // RULE 1 & 3: DELETE operation targeted exactly on Document with auth guard
+    async function deleteLedger(id) {
+      if (!user) {
+        showToast("Error", "Gagal menghapus, database offline.", "danger");
+        return;
+      }
+      requestConfirmation("Hapus Ledger Keuangan?", "Apakah Anda yakin ingin menghapus data ini secara permanen dari Cloud?", async () => {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'logKeuangan', String(id)));
+          showToast("Hapus Sukses", "Log profit dihapus dari Cloud.", "danger");
+        } catch (err) {
+          console.error(err);
+          showToast("Gagal Menghapus", "Kesalahan sistem saat menghapus dari Cloud.", "danger");
+        }
+      });
+    }
+
+    // RULE 1 & 3: CREATE/UPDATE operation targeted exactly on strict path with Auth guard
+    async function saveLedgerEntry(e) {
+      e.preventDefault();
+      if (!user) {
+        showToast("Error", "Gagal menyimpan, database offline.", "danger");
+        return;
+      }
+
+      const editId = document.getElementById('edit-id').value;
+      const cabangId = parseInt(document.getElementById('form-cabang').value);
+      const bulan = parseInt(document.getElementById('form-bulan').value);
+      const tahun = parseInt(document.getElementById('form-tahun').value);
+      const tipe = document.querySelector('input[name="form-tipe"]:checked').value;
+      const kategoriId = parseInt(document.getElementById('form-kategori').value);
+      const nominal = parseFloat(document.getElementById('form-nominal').value);
+      const keterangan = document.getElementById('form-keterangan').value;
+
+      if (isNaN(cabangId) || isNaN(kategoriId)) {
+        showToast("Gagal Menyimpan", "Silakan tambahkan cabang dan kategori terlebih dahulu di menu Pengaturan Bisnis.", "danger");
+        return;
+      }
+
+      const id = editId ? parseInt(editId) : Date.now();
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'logKeuangan', String(id));
+
+      try {
+        await setDoc(docRef, { id, cabang_id: cabangId, bulan, tahun, tipe, kategori_id: kategoriId, nominal, keterangan });
+        showToast("Ledger Disimpan", editId ? "Data transaksi diperbarui di Cloud." : "Transaksi baru tersimpan di Cloud.", "success");
+        resetLedgerForm();
+      } catch (err) {
+        console.error(err);
+        showToast("Gagal Menyimpan", "Gagal mengunggah data ke Cloud.", "danger");
+      }
+    }
+
+    function resetLedgerForm() {
+      document.getElementById('edit-id').value = '';
+      document.getElementById('ledger-form').reset();
+      toggleFormCategoryFilter();
+      updateLiveRupiahPreview();
+    }
+
+    function renderSettingsLists() {
+      const cabangContainer = document.getElementById('cabang-list');
+      cabangContainer.innerHTML = '';
+      if (dbCabang.length === 0) {
+        cabangContainer.innerHTML = `<li class="p-4 text-center text-slate-500 text-xs">Kosong. Tambahkan cabang baru di atas.</li>`;
+      } else {
+        dbCabang.forEach(cabang => {
+          const li = document.createElement('li');
+          li.className = "flex items-center justify-between px-4 py-3 text-xs";
+          li.innerHTML = `<span class="font-semibold text-slate-200">Cabang ${cabang.nama}</span><button onclick="deleteCabang(${cabang.id})" class="text-rose-400 hover:text-rose-300 p-1 rounded hover:bg-slate-800 transition"><i class="fa-solid fa-trash-can"></i></button>`;
+          cabangContainer.appendChild(li);
+        });
+      }
+
+      const kategoriContainer = document.getElementById('kategori-list');
+      kategoriContainer.innerHTML = '';
+      if (dbKategori.length === 0) {
+        kategoriContainer.innerHTML = `<li class="p-4 text-center text-slate-500 text-xs">Kosong. Tambahkan kategori baru di atas.</li>`;
+      } else {
+        dbKategori.forEach(kat => {
+          const li = document.createElement('li');
+          li.className = "flex items-center justify-between px-4 py-2.5 text-xs";
+          const badgeColor = kat.tipe === 'pendapatan' ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-500/20' : 'bg-rose-950/60 text-rose-400 border border-rose-500/20';
+          li.innerHTML = `<div class="flex items-center gap-2"><span class="px-2 py-0.5 text-[9px] rounded-md font-bold uppercase ${badgeColor}">${kat.tipe}</span><span class="font-medium text-slate-300">${kat.nama}</span></div><button onclick="deleteKategori(${kat.id})" class="text-rose-400 hover:text-rose-300 p-1 rounded hover:bg-slate-800 transition"><i class="fa-solid fa-trash-can"></i></button>`;
+          kategoriContainer.appendChild(li);
+        });
+      }
+    }
+
+    // RULE 1: STRICT PATH CREATE/UPDATE Cabang Bisnis
+    async function addCabang(e) {
+      e.preventDefault();
+      if (!user) return;
+      const input = document.getElementById('cabang-input-name');
+      const name = input.value.trim();
+      if (!name) return;
+      if (dbCabang.some(c => c.nama.toLowerCase() === name.toLowerCase())) { showToast("Error", "Nama cabang sudah ada.", "danger"); return; }
+      
+      const id = Date.now();
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cabang', String(id)), { id, nama: name });
+        input.value = '';
+        showToast("Cabang Baru", `Cabang ${name} disimpan di Cloud.`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("Error", "Gagal menyimpan ke Cloud.", "danger");
+      }
+    }
+
+    // RULE 1: STRICT PATH DELETE Cabang Bisnis
+    async function deleteCabang(id) {
+      if (!user) return;
+      const cabang = dbCabang.find(c => c.id === id);
+      if (!cabang) return;
+      requestConfirmation("Hapus Cabang?", `Hapus Cabang ${cabang.nama}?`, async () => {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cabang', String(id)));
+          showToast("Cabang Dihapus", `Cabang ${cabang.nama} dinonaktifkan dari Cloud.`, "success");
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+
+    // RULE 1: STRICT PATH CREATE/UPDATE Kategori Keuangan
+    async function addKategori(e) {
+      e.preventDefault();
+      if (!user) return;
+      const input = document.getElementById('kategori-input-name');
+      const tipe = document.getElementById('kategori-input-tipe').value;
+      const name = input.value.trim();
+      if (!name) return;
+      if (dbKategori.some(k => k.nama.toLowerCase() === name.toLowerCase() && k.tipe === tipe)) { showToast("Error", "Kategori sejenis sudah ada.", "danger"); return; }
+      
+      const id = Date.now();
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'kategori', String(id)), { id, nama: name, tipe });
+        input.value = '';
+        showToast("Kategori Baru", `"${name}" berhasil disimpan di Cloud.`, "success");
+      } catch (err) {
+        console.error(err);
+        showToast("Error", "Gagal menyimpan kategori ke Cloud.", "danger");
+      }
+    }
+
+    // RULE 1: STRICT PATH DELETE Kategori Keuangan
+    async function deleteKategori(id) {
+      if (!user) return;
+      const kat = dbKategori.find(k => k.id === id);
+      if (!kat) return;
+      requestConfirmation("Hapus Kategori?", `Hapus kategori "${kat.nama}"?`, async () => {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'kategori', String(id)));
+          showToast("Kategori Dihapus", "Kategori dihilangkan dari Cloud.", "success");
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+
+    // RULE 1 & 3: Clear and Re-Seed Mock Defaults directly to cloud DB
+    async function triggerResetDemoData() {
+      if (!user) return;
+      requestConfirmation(
+        "Reset ke Data Demo Cloud?",
+        "Tindakan ini akan mengunggah seluruh set data demo bawaan ke Cloud Database Anda. Laporan akan diatur ulang.",
+        async () => {
+          showToast("Memproses...", "Sedang mengunggah data demo ke Cloud Database...", "info");
+          try {
+            for (const item of defaultCabang) {
+              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cabang', String(item.id)), item);
+            }
+            for (const item of defaultKategori) {
+              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'kategori', String(item.id)), item);
+            }
+            for (const item of defaultLogKeuangan) {
+              await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'logKeuangan', String(item.id)), item);
+            }
+            showToast("Reset Berhasil", "Sistem dikembalikan ke data demo bawaan di Cloud.", "success");
+          } catch (err) {
+            console.error(err);
+            showToast("Error Reset", "Gagal mengatur ulang database cloud.", "danger");
+          }
+        }
+      );
+    }
+
+    // RULE 1 & 3: Clear all Documents inside strict paths in Cloud
+    async function triggerClearAllData() {
+      if (!user) return;
+      requestConfirmation(
+        "Kosongkan Semua Data Cloud?",
+        "Seluruh data cabang, kategori, dan log transaksi di Cloud akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan!",
+        async () => {
+          showToast("Membersihkan...", "Sedang menghapus data cloud...", "info");
+          try {
+            for (const item of dbCabang) {
+              await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cabang', String(item.id)));
+            }
+            for (const item of dbKategori) {
+              await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'kategori', String(item.id)));
+            }
+            for (const item of dbLogKeuangan) {
+              await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'logKeuangan', String(item.id)));
+            }
+            showToast("Data Dikosongkan", "Seluruh database cloud telah dibersihkan.", "danger");
+          } catch (err) {
+            console.error(err);
+            showToast("Error", "Gagal mengosongkan database cloud.", "danger");
+          }
+        }
+      );
+    }
+
+    function togglePublicView() {
+      const isChecked = document.getElementById('public-view-toggle').checked;
+      const viewBadge = document.getElementById('badge-view');
+      const banner = document.getElementById('public-view-banner');
+      if (isChecked) {
+        viewBadge.textContent = "Public Mode";
+        viewBadge.className = "px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-950 text-emerald-400 border border-emerald-500/30";
+        banner.classList.remove('hidden');
+        switchTab('dashboard');
+      } else {
+        viewBadge.textContent = "Owner Mode";
+        viewBadge.className = "px-2 py-0.5 text-[10px] font-bold rounded-full bg-cyan-950 text-cyan-400 border border-cyan-500/30";
+        banner.classList.add('hidden');
+      }
+      applyPublicModeUIVisibility();
+    }
+
+    function applyPublicModeUIVisibility() {
+      const isChecked = document.getElementById('public-view-toggle').checked;
+      document.querySelectorAll('.admin-element').forEach(el => {
+        if (isChecked) el.classList.add('hidden');
+        else el.classList.remove('hidden');
+      });
+    }
+
+    function switchCodeTab(contentId, btnId) {
+      activeCodeTab = contentId;
+      document.querySelectorAll('.code-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(contentId).classList.remove('hidden');
+      document.querySelectorAll('.code-tab-btn').forEach(btn => { 
+        btn.className = "code-tab-btn py-2 px-3 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200"; 
+      });
+      document.getElementById(btnId).className = "code-tab-btn py-2 px-3 text-xs font-bold border-b-2 border-emerald-500 text-emerald-400";
+    }
+
+    function copyActiveCode() {
+      const activeElement = document.getElementById(activeCodeTab);
+      if (!activeElement) return;
+      const codeString = activeElement.textContent || activeElement.innerText;
+      
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = codeString;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      
+      try {
+        const success = document.execCommand('copy');
+        if (success) {
+          showToast("Berhasil Menyalin", "Kode blueprint Laravel berhasil disalin ke clipboard.", "success");
+        } else {
+          showToast("Gagal Menyalin", "Gagal menyalin kode.", "danger");
+        }
+      } catch (err) {
+        showToast("Error", "Browser Anda tidak mendukung tindakan ini.", "danger");
+      }
+      document.body.removeChild(tempTextArea);
+    }
+
+    function showToast(title, message, type = "success") {
+      const toast = document.getElementById('custom-toast');
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-message').textContent = message;
+      const borderColor = type === 'danger' ? 'border-rose-500/40 shadow-rose-950/20' : type === 'info' ? 'border-cyan-500/40 shadow-cyan-950/20' : 'border-emerald-500/40 shadow-emerald-950/20';
+      toast.children[0].className = `bg-slate-900 border ${borderColor} shadow-xl rounded-xl p-4 flex items-center space-x-3`;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3500);
+    }
+
+    // Bind function to global window scope so standard inline HTML onclick attributes can access them
+    window.switchTab = switchTab;
+    window.saveLedgerEntry = saveLedgerEntry;
+    window.resetLedgerForm = resetLedgerForm;
+    window.addCabang = addCabang;
+    window.deleteCabang = deleteCabang;
+    window.addKategori = addKategori;
+    window.deleteKategori = deleteKategori;
+    window.triggerResetDemoData = triggerResetDemoData;
+    window.triggerClearAllData = triggerClearAllData;
+    window.togglePublicView = togglePublicView;
+    window.switchCodeTab = switchCodeTab;
+    window.copyActiveCode = copyActiveCode;
+    window.editLedger = editLedger;
+    window.deleteLedger = deleteLedger;
+    window.applyGlobalFilters = applyGlobalFilters;
+    window.updateLiveRupiahPreview = updateLiveRupiahPreview;
+    window.saveFirebaseConfigUI = saveFirebaseConfigUI;
+    window.clearFirebaseConfigUI = clearFirebaseConfigUI;
+
+    // Run system bootloader within ES module
+    populateYearDropdowns();
+    initFirebaseAndAuth();
+
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const navMenu = document.getElementById('nav-menu');
+    if (mobileBtn && navMenu) {
+      mobileBtn.addEventListener('click', () => navMenu.classList.toggle('hidden'));
+    }
+  </script>
+</body>
+</html>
