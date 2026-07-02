@@ -1716,18 +1716,6 @@ class ExecutiveFinanceController extends Controller
     // Run system bootloader within ES module
     populateYearDropdowns();
     initFirebaseAndAuth();
-
-const navMenu = document.getElementById('nav-menu');
-if (mobileBtn && navMenu) {
-  mobileBtn.addEventListener('click', () => navMenu.classList.toggle('hidden'));
-}
-
-// Fungsi untuk toggle form category filter
-function toggleFormCategoryFilter(categoryElement) {
-  if (!categoryElement) {
-    console.warn("Category element not found");
-    return false;
-  }
   
   try {
     // Toggle visibility or active state
