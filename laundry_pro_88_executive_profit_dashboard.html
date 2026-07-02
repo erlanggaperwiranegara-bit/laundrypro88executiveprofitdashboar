@@ -1717,15 +1717,38 @@ class ExecutiveFinanceController extends Controller
     populateYearDropdowns();
     initFirebaseAndAuth();
 
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    const navMenu = document.getElementById('nav-menu');
-    if (mobileBtn && navMenu) {
-      mobileBtn.addEventListener('click', () => navMenu.classList.toggle('hidden'));
-    }
-    // Fungsi penyelamat agar form tidak error saat tipe transaksi diklik
-function toggleFormCategoryFilter() {
-    console.log("Fungsi dipanggil, semua kategori aman diakses.");
+const navMenu = document.getElementById('nav-menu');
+if (mobileBtn && navMenu) {
+  mobileBtn.addEventListener('click', () => navMenu.classList.toggle('hidden'));
+}
+
+// Fungsi untuk toggle form category filter
+function toggleFormCategoryFilter(categoryElement) {
+  if (!categoryElement) {
+    console.warn("Category element not found");
+    return false;
+  }
+  
+  try {
+    // Toggle visibility or active state
+    categoryElement.classList.toggle('active');
+    
+    // Get all category filters
+    const allCategories = document.querySelectorAll('[data-category]');
+    const selectedCategories = Array.from(allCategories)
+      .filter(cat => cat.classList.contains('active'))
+      .map(cat => cat.dataset.category);
+    
+    console.log("Selected categories:", selectedCategories);
+    
+    // Update form with selected categories
+    filterFormByCategory(selectedCategories);
+    
     return true;
+  } catch (error) {
+    console.error("Error toggling category filter:", error);
+    return false;
+  }
 }
   </script>
 </body>
